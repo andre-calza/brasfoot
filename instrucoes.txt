@@ -1,0 +1,714 @@
+Crie um jogo desktop offline estilo Brasfoot, porém focado em seleções da Copa do Mundo, onde o jogador assume o papel de treinador de uma seleção nacional.
+
+Stack obrigatória:
+
+- Electron
+- React
+- TypeScript
+- SQLite local
+- Interface moderna, leve e responsiva
+- Rodar 100% offline
+
+Nome provisório do jogo:
+World Coach
+
+Objetivo:
+O jogador escolhe uma seleção nacional, convoca jogadores, monta escalação, define táticas, disputa a Copa do Mundo no formato de 2026 com 48 seleções e evolui sua carreira como treinador ao longo de várias edições.
+
+O jogo deve ser simples, viciante, visualmente agradável e com mecânicas realistas. Deve permitir zebras no futebol, mas sem resultados absurdos. Por exemplo: em um jogo entre Curaçao e Alemanha, a Alemanha deve vencer na maioria das vezes. Curaçao pode empatar raramente ou vencer muito raramente, mas nunca deve golear a Alemanha.
+
+---
+
+1. Estrutura do projeto
+
+Criar projeto com:
+
+- Electron
+- React
+- TypeScript
+- SQLite
+- Vite
+- Interface em tema escuro por padrão
+
+Organizar em camadas:
+
+- "src/main" — processo principal do Electron
+- "src/renderer" — aplicação React
+- "src/database" — conexão SQLite, migrations e seeds
+- "src/services" — regras de aplicação
+- "src/game-engine" — regras de simulação
+- "src/components" — componentes reutilizáveis
+- "src/pages" — telas
+- "src/types" — interfaces TypeScript
+- "src/utils" — funções utilitárias
+
+Criar também:
+
+- scripts para rodar em desenvolvimento
+- script para build desktop
+- README explicando como rodar
+- banco SQLite inicial
+- seed inicial com seleções e jogadores fictícios
+- código limpo, tipado e comentado nos pontos importantes
+
+---
+
+2. Regras importantes
+
+- Não usar API externa.
+- Não depender de internet.
+- Não usar dados reais licenciados de jogadores.
+- Usar nomes fictícios para jogadores.
+- Pode usar nomes reais de países/seleções.
+- Priorizar gameplay simples, rápido e viciante.
+- Evitar complexidade desnecessária no MVP.
+- O jogo deve ser leve e rápido.
+
+---
+
+3. Telas principais
+
+Criar as seguintes telas:
+
+Tela inicial
+
+- Novo jogo
+- Carregar jogo
+- Configurações
+- Sair
+
+Criação de carreira
+
+- Nome do treinador
+- Seleção inicial
+- Dificuldade
+- Objetivo da federação
+- Reputação inicial do treinador
+
+Tela principal da seleção
+
+Mostrar:
+
+- Seleção atual
+- Próximo jogo
+- Fase da competição
+- Moral do elenco
+- Confiança da federação
+- Reputação do treinador
+- Botões para:
+  - Convocação
+  - Escalação
+  - Tática
+  - Calendário
+  - Tabela da Copa
+  - Simular partida
+  - Estatísticas
+  - Salvar jogo
+
+---
+
+4. Formato da Copa do Mundo 2026
+
+Implementar a Copa com 48 seleções.
+
+Regras:
+
+- 12 grupos com 4 seleções cada.
+- Cada seleção joga 3 partidas na fase de grupos.
+- Classificam:
+  - 1º colocado de cada grupo
+  - 2º colocado de cada grupo
+  - 8 melhores terceiros colocados
+- Total de classificados para o mata-mata: 32 seleções.
+- Mata-mata com:
+  - Fase de 32
+  - Oitavas
+  - Quartas
+  - Semifinal
+  - Disputa de terceiro lugar
+  - Final
+
+Critérios de classificação:
+
+1. Pontos
+2. Saldo de gols
+3. Gols marcados
+4. Confronto direto, se possível
+5. Sorteio controlado como último critério
+
+Caso o chaveamento oficial seja complexo demais para o MVP, criar chaveamento simplificado:
+
+- Melhor campanha x pior campanha entre classificados
+- Segunda melhor campanha x segunda pior campanha
+- E assim por diante
+- Evitar confronto do mesmo grupo logo na primeira fase de mata-mata, se possível
+
+---
+
+5. Seleções
+
+Criar 48 seleções divididas por tiers de força.
+
+Cada seleção deve ter:
+
+- id
+- nome
+- continente
+- grupo
+- tier
+- teamStrength de 1 a 100
+- objetivo da federação
+- reputação mínima esperada
+- estilo típico de jogo
+
+Exemplo de tiers:
+
+Tier S — favoritas
+
+- Brasil — 94
+- França — 93
+- Argentina — 92
+- Alemanha — 90
+- Espanha — 90
+- Inglaterra — 89
+- Portugal — 88
+
+Tier A — fortes
+
+- Holanda — 86
+- Bélgica — 85
+- Croácia — 84
+- Uruguai — 84
+- Itália — 83
+- Colômbia — 82
+- Marrocos — 81
+- Japão — 82
+
+Tier B — competitivas
+
+- México — 77
+- Estados Unidos — 78
+- Suíça — 79
+- Dinamarca — 78
+- Senegal — 77
+- Sérvia — 76
+- Coreia do Sul — 76
+- Equador — 76
+- Chile — 74
+- Nigéria — 75
+
+Tier C — médias
+
+- Canadá — 72
+- Austrália — 72
+- Paraguai — 73
+- Tunísia — 71
+- Costa Rica — 69
+- Gana — 72
+- Camarões — 72
+- Argélia — 73
+- Turquia — 74
+- Polônia — 75
+- Suécia — 75
+- Noruega — 75
+
+Tier D — zebras
+
+- Curaçao — 55
+- Panamá — 56
+- Cabo Verde — 58
+- Nova Zelândia — 60
+- Catar — 61
+- Arábia Saudita — 64
+- Iraque — 62
+- Jordânia — 60
+- Haiti — 54
+- África do Sul — 63
+- Uzbequistão — 65
+- República Tcheca — 74
+
+---
+
+6. Jogadores fictícios
+
+Gerar jogadores fictícios conforme a força da seleção.
+
+Cada jogador deve ter:
+
+- id
+- nome fictício
+- país
+- idade
+- posição
+- overall
+- ataque
+- defesa
+- passe
+- velocidade
+- finalização
+- resistência
+- moral
+- entrosamento
+- potencial
+- status físico
+- titularidade desejada
+- aposentadoria provável
+
+Distribuição por tier:
+
+Tier S
+
+- melhores jogadores entre 84 e 94 de overall
+- média do elenco entre 82 e 89
+
+Tier A
+
+- melhores jogadores entre 80 e 88
+- média do elenco entre 78 e 84
+
+Tier B
+
+- melhores jogadores entre 74 e 84
+- média do elenco entre 72 e 79
+
+Tier C
+
+- melhores jogadores entre 68 e 78
+- média do elenco entre 66 e 74
+
+Tier D
+
+- melhores jogadores entre 58 e 72
+- média do elenco entre 55 e 68
+
+Gerar pelo menos 30 jogadores por seleção, permitindo convocação de 26 jogadores.
+
+---
+
+7. Convocação
+
+Tela de convocação deve permitir selecionar 26 jogadores.
+
+Validar quantidade mínima por posição:
+
+- 3 goleiros
+- 6 defensores
+- 6 meio-campistas
+- 4 atacantes
+
+Mostrar alertas caso a convocação esteja inválida.
+
+Permitir filtros por:
+
+- posição
+- idade
+- overall
+- moral
+- condição física
+
+---
+
+8. Escalação
+
+Permitir escolher:
+
+- 11 titulares
+- banco de reservas
+- capitão
+- cobradores de pênalti
+- cobrador de falta
+- cobrador de escanteio
+
+Validar:
+
+- precisa ter goleiro titular
+- jogadores fora de posição recebem penalidade
+- jogadores cansados ou lesionados devem exibir alerta
+
+Mostrar:
+
+- overall médio do time titular
+- entrosamento médio
+- força ofensiva
+- força defensiva
+- força do meio-campo
+- risco de cansaço
+
+---
+
+9. Tática
+
+Permitir configurar:
+
+Formação
+
+- 4-3-3
+- 4-4-2
+- 3-5-2
+- 5-3-2
+
+Mentalidade
+
+- Ultra defensiva
+- Defensiva
+- Equilibrada
+- Ofensiva
+- Tudo ao ataque
+
+Estilo de jogo
+
+- Posse de bola
+- Contra-ataque
+- Pelas pontas
+- Pelo meio
+- Jogo direto
+
+Pressão
+
+- Baixa
+- Média
+- Alta
+
+A tática deve afetar a simulação.
+
+Exemplos:
+
+- Pressão alta aumenta chance de roubar bola, mas aumenta cansaço.
+- Mentalidade ofensiva aumenta chances de gol, mas expõe a defesa.
+- Contra-ataque ajuda times fracos contra times fortes.
+- Posse de bola favorece times tecnicamente superiores.
+- Jogo direto aumenta aleatoriedade e bolas disputadas.
+
+---
+
+10. Motor de simulação realista
+
+Criar arquivo:
+
+"src/game-engine/matchSimulator.ts"
+
+Com as funções:
+
+- "calculateEffectiveStrength"
+- "calculateWinProbabilities"
+- "generateScore"
+- "generateMatchEvents"
+- "simulateMatch"
+- "runSimulationTest"
+
+Criar interfaces TypeScript para:
+
+- "Team"
+- "Player"
+- "Tactic"
+- "MatchResult"
+- "MatchEvent"
+- "SimulationDebugReport"
+
+A simulação deve considerar:
+
+- força média do time titular
+- força geral da seleção
+- moral
+- entrosamento
+- tática
+- cansaço
+- pressão emocional do mata-mata
+- aleatoriedade limitada
+
+Fórmula inicial sugerida:
+
+"effectiveStrength = teamStrength * 0.35 + averageStartingOverall * 0.40 + morale * 0.10 + chemistry * 0.10 + tacticBonus * 0.05 - fatiguePenalty"
+
+---
+
+11. Controle de zebras
+
+Implementar regra de diferença de força.
+
+Diferença de 0 a 5 pontos
+
+- favorito vence: 40%
+- empate: 30%
+- azarão vence: 30%
+
+Diferença de 6 a 12 pontos
+
+- favorito vence: 55%
+- empate: 25%
+- azarão vence: 20%
+
+Diferença de 13 a 22 pontos
+
+- favorito vence: 70%
+- empate: 20%
+- azarão vence: 10%
+
+Diferença acima de 23 pontos
+
+- favorito vence: 85%
+- empate: 12%
+- azarão vence: 3%
+
+Regras obrigatórias:
+
+- Mesmo quando o azarão vencer, limitar o placar.
+- Azarão muito inferior vencendo favorito: 1x0 ou 2x1 no máximo.
+- Nunca permitir resultado como Curaçao 5x0 Alemanha.
+- Times fortes podem golear times fracos.
+- Times fracos raramente goleiam times fortes.
+- Empates entre times muito diferentes devem ser mais comuns em 0x0, 1x1 ou raramente 2x2.
+
+---
+
+12. Sistema de gols realista
+
+Criar função:
+
+"generateScore(homeTeam, awayTeam, expectedResult)"
+
+Regras:
+
+- Times fortes podem vencer times fracos por 2x0, 3x0, 4x1, 5x1.
+- Azarões muito inferiores só podem vencer por 1x0 ou 2x1.
+- Evitar placares altos aleatórios.
+- Placar acima de 5 gols para um time só deve ser raro.
+- Placar acima de 6 gols totais deve ser muito raro.
+- Mata-mata empatado deve ir para prorrogação e depois pênaltis.
+- Em pênaltis, aumentar um pouco a chance de zebra, mas sem exagero.
+
+---
+
+13. Narração da partida
+
+Durante a simulação, exibir narração textual minuto a minuto.
+
+Eventos possíveis:
+
+- chute perigoso
+- defesa do goleiro
+- falta
+- cartão amarelo
+- cartão vermelho raro
+- gol
+- impedimento
+- lesão
+- substituição sugerida
+- pressão final
+- pênalti
+- disputa de pênaltis em mata-mata
+
+Exemplo:
+
+12' - Brasil troca passes no meio-campo.
+18' - O ponta recebe na esquerda e cruza.
+19' - GOOOOOL do Brasil!
+33' - Japão responde em contra-ataque.
+45' - Fim do primeiro tempo.
+67' - O treinador muda para uma postura ofensiva.
+90' - Fim de jogo.
+
+A tela deve mostrar os eventos de forma agradável, como uma timeline.
+
+---
+
+14. Pós-jogo
+
+Exibir:
+
+- placar final
+- estatísticas
+- posse de bola
+- finalizações
+- finalizações no alvo
+- faltas
+- cartões
+- xG simplificado
+- notas dos jogadores
+- alteração de moral
+- alteração de confiança da federação
+- atualização automática da tabela
+- classificação do grupo
+- próximos jogos
+
+---
+
+15. Sistema de carreira
+
+Após a Copa:
+
+- avaliar desempenho do treinador
+- aumentar reputação se cumprir objetivo
+- reduzir reputação se fracassar
+- permitir demissão
+- gerar propostas de outras seleções
+- permitir avançar para próxima Copa
+
+Avaliação deve considerar a força da seleção.
+
+Exemplos:
+
+- Ser eliminado nas oitavas com Curaçao pode ser sucesso.
+- Ser eliminado nas oitavas com Brasil é fracasso.
+- Chegar nas quartas com Japão é ótimo.
+- Cair na fase de grupos com Alemanha é desastre.
+
+Objetivos por tier:
+
+- Tier S: mínimo semifinal
+- Tier A: mínimo quartas ou oitavas
+- Tier B: mínimo passar da fase de grupos
+- Tier C: competir e tentar fase de 32
+- Tier D: campanha digna
+
+---
+
+16. Evolução dos jogadores
+
+A cada ciclo de Copa:
+
+- jogadores envelhecem 4 anos
+- jogadores acima de certa idade perdem atributos
+- jovens podem evoluir
+- alguns jogadores se aposentam
+- novas promessas são geradas automaticamente
+
+Exemplo:
+
+- jogador de 18 a 24 anos pode evoluir bastante
+- jogador de 25 a 29 anos evolui pouco ou mantém nível
+- jogador de 30 a 33 anos começa a perder físico
+- jogador acima de 34 anos pode perder overall e se aposentar
+
+---
+
+17. Eventos aleatórios
+
+Criar eventos entre partidas:
+
+- lesão durante treino
+- jogador reclama da reserva
+- estrela quer ser titular
+- imprensa critica convocação
+- torcida pressiona
+- jogador jovem se destaca no treino
+- problema de moral no elenco
+- recuperação física acima do esperado
+- desgaste por viagem
+- chuva forte antes da partida
+
+Esses eventos devem afetar:
+
+- moral
+- entrosamento
+- condição física
+- confiança da federação
+- imprensa
+
+---
+
+18. Persistência SQLite
+
+Salvar no SQLite:
+
+- carreira
+- treinador
+- reputação
+- seleções
+- jogadores
+- convocações
+- escalações
+- táticas
+- partidas
+- estatísticas
+- grupos
+- tabela
+- histórico de Copas
+- títulos
+- propostas recebidas
+- eventos aleatórios
+
+---
+
+19. Design visual
+
+Criar interface moderna, limpa e agradável:
+
+- tema escuro por padrão
+- cards para informações principais
+- bandeiras ou ícones simples para seleções
+- tabelas bem organizadas
+- botões grandes e claros
+- feedback visual para vitórias, derrotas e alertas
+- layout responsivo dentro da janela desktop
+- tela de simulação com timeline de eventos
+- tela de tabela com grupos e mata-mata
+- tela de carreira com histórico do treinador
+
+Não usar gráficos 3D.
+
+Usar visual de dashboard esportivo moderno.
+
+---
+
+20. Testes de simulação
+
+Criar testes automatizados ou tela/debug para rodar simulações em massa.
+
+Rodar 1.000 simulações de:
+
+- Alemanha x Curaçao
+- Brasil x Argentina
+- Japão x Marrocos
+- França x Haiti
+- México x Estados Unidos
+
+Para Alemanha x Curaçao, resultado esperado aproximado:
+
+- Alemanha vencendo entre 80% e 90%
+- Empates entre 8% e 15%
+- Curaçao vencendo entre 1% e 5%
+- Nenhuma vitória de Curaçao por goleada
+- Nenhum placar absurdo como Curaçao 4x0 Alemanha
+
+Exibir relatório com:
+
+- percentual de vitórias do time A
+- percentual de empates
+- percentual de vitórias do time B
+- maior placar gerado
+- quantidade de placares absurdos bloqueados
+- média de gols por partida
+
+---
+
+21. Ordem de implementação
+
+Implementar nesta ordem:
+
+1. Criar estrutura base do projeto.
+2. Configurar Electron + React + TypeScript + SQLite.
+3. Criar banco, migrations e seeds.
+4. Criar 48 seleções.
+5. Criar jogadores fictícios.
+6. Criar tela inicial.
+7. Criar criação de carreira.
+8. Criar tela principal da seleção.
+9. Criar convocação.
+10. Criar escalação.
+11. Criar tática.
+12. Criar formato da Copa 2026.
+13. Criar motor de simulação realista.
+14. Criar tela de simulação com timeline.
+15. Criar pós-jogo.
+16. Criar tabela da Copa.
+17. Criar mata-mata.
+18. Criar sistema de carreira.
+19. Criar evolução dos jogadores.
+20. Criar eventos aleatórios.
+21. Criar persistência completa.
+22. Criar testes de simulação.
+23. Refinar visual.
+24. Criar README final.
+
+Comece pelo MVP funcional, mas já deixando a arquitetura preparada para expansão futura.

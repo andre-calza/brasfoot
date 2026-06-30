@@ -1,0 +1,33 @@
+{
+  "name": "world-coach",
+  "version": "0.1.0",
+  "private": true,
+  "description": "World Coach - jogo desktop offline de treinador de selecoes nacionais.",
+  "main": "dist/main/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"vite --host 127.0.0.1\" \"wait-on http://127.0.0.1:5173 && tsc -p tsconfig.main.json --watch\" \"wait-on http://127.0.0.1:5173 dist/main/main.js && electron .\"",
+    "build": "tsc -p tsconfig.main.json && vite build",
+    "dist": "npm run build",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.main.json --noEmit",
+    "test:sim": "tsx src/game-engine/runSimulationTest.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "better-sqlite3": "^11.7.0",
+    "concurrently": "^9.1.2",
+    "electron": "^34.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "vite": "^6.0.7",
+    "wait-on": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
